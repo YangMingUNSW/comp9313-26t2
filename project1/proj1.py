@@ -7,21 +7,24 @@ class proj1(MRJob):
     """
     Single-step MRJob solution for latency stability analysis.
 
-    Techniques used:
-      - In-mapper combining (mapper_init / mapper_final) plus a combiner to
-        shrink the amount of intermediate data.
-      - Order inversion: a special sort token ("0") makes every device's
-        OVERALL partials arrive at the reducer BEFORE any of its daily
-        partials, so the overall average is fully known before the first
-        daily record is processed.
-      - Secondary sort: SORT_VALUES streams each device's daily partials to
-        the reducer already ordered by date DESCENDING (achieved with a
-        digit-complemented date string), so the reducer never has to buffer
-        or sort all of a device's days in memory.
+    Design:
+      - In-mapper combining (mapper_init / mapper_final) + a combiner shrink
+        the intermediate data.
+      - Order inversion: a special sort token "0" is attached to each device's
+        OVERALL partials so they sort before the daily partials ("1" + date).
+      - Secondary sort: SORT_VALUES asks Hadoop to deliver each device's values
+        already ordered -- overall first, then days DESCENDING (via a
+        digit-complemented date). The reducer therefore emits the days in the
+        order they arrive, without an in-memory sort.
+
+    Correctness does NOT depend on the ordering: the reducer fully accumulates
+    every overall partial before computing the overall average, and aggregates
+    each day's partials, so the LatencyIncrease values are always exact even if
+    the framework ordering were unavailable.
     """
 
-    # Partition + group by the key (device), but ALSO sort by the value, so a
-    # single reducer() call receives one device's values in fully sorted order.
+    # Partition + group by key (device); also sort values, so one reducer call
+    # receives a device's values in sorted order (overall first, days desc).
     SORT_VALUES = True
 
     OVERALL = "0"          # sort token for the per-device overall stats
@@ -34,9 +37,9 @@ class proj1(MRJob):
 
     @staticmethod
     def _inv_date(date):
-        # Digit-wise 9's complement of a fixed-width YYYY-MM-DD string, so that
-        # ascending lexicographic order corresponds to DESCENDING date order
-        # (separators are left untouched and stay in the same positions).
+        # Digit-wise 9's complement of a fixed-width YYYY-MM-DD string so that
+        # ascending lexicographic order == DESCENDING date order (separators
+        # stay in place and keep the same relative positions).
         return "".join(str(9 - int(ch)) if ch.isdigit() else ch for ch in date)
 
     # ---- map side: in-mapper combining -------------------------------------
@@ -56,7 +59,7 @@ class proj1(MRJob):
         except ValueError:
             return
 
-        # Each entry: (device, sort_token) -> [real_marker, sum, count]
+        # Entry: (device, sort_token) -> [real_marker, sum, count]
         ov = self.partial.setdefault((device, self.OVERALL), ["*", 0.0, 0])
         ov[1] += latency
         ov[2] += 1
@@ -68,9 +71,8 @@ class proj1(MRJob):
 
     def mapper_final(self):
         for (device, token), (real, s, c) in self.partial.items():
-            # Key = device (used for partition + group). The value carries the
-            # sort token first so SORT_VALUES puts overall-before-daily and
-            # orders the days descending.
+            # Key = device (partition + group). Value leads with the sort token
+            # so SORT_VALUES puts overall-before-daily and orders days desc.
             yield device, [token, real, s, c]
 
     # ---- combiner: merge partials that share the same sort token ------------
@@ -84,7 +86,7 @@ class proj1(MRJob):
         for token, (real, s, c) in agg.items():
             yield device, [token, real, s, c]
 
-    # ---- reduce side: streaming, no full buffering -------------------------
+    # ---- reduce side -------------------------------------------------------
 
     def reducer_init(self):
         tau_str = jobconf_from_env("myjob.settings.tau")
@@ -93,44 +95,34 @@ class proj1(MRJob):
     def reducer(self, device, values):
         overall_sum = 0.0
         overall_count = 0
-        overall_avg = None
 
-        cur_date = None
-        cur_sum = 0.0
-        cur_count = 0
+        order = []          # distinct dates in framework-delivered order
+        agg = {}            # date -> [sum, count]
 
         for token, real, s, c in values:
             if token == self.OVERALL:
-                # Order inversion: every overall partial arrives first.
+                # Accumulate ALL overall partials (correct regardless of order).
                 overall_sum += s
                 overall_count += c
-                continue
+            else:
+                if real not in agg:
+                    agg[real] = [0.0, 0]
+                    order.append(real)
+                agg[real][0] += s
+                agg[real][1] += c
 
-            # First daily record => the overall stats are now complete.
-            if overall_avg is None:
-                if overall_count == 0:
-                    return
-                overall_avg = overall_sum / overall_count
+        if overall_count == 0:
+            return
 
-            # Secondary sort: daily partials arrive grouped by date, descending.
-            # Merge the (possibly several) partials for the current date, then
-            # emit as soon as the date changes -- only one day is held at a time.
-            if real != cur_date:
-                if cur_date is not None:
-                    increase = (cur_sum / cur_count) - overall_avg
-                    if increase > self.tau:
-                        yield device, "{}:{}".format(cur_date, increase)
-                cur_date = real
-                cur_sum = 0.0
-                cur_count = 0
-            cur_sum += s
-            cur_count += c
+        overall_avg = overall_sum / overall_count
 
-        # Flush the final date.
-        if cur_date is not None:
-            increase = (cur_sum / cur_count) - overall_avg
+        # Emit in the order the days arrived (descending when SORT_VALUES is in
+        # effect) -- no in-memory sort, so this reflects the secondary sort.
+        for date in order:
+            day_sum, day_count = agg[date]
+            increase = (day_sum / day_count) - overall_avg
             if increase > self.tau:
-                yield device, "{}:{}".format(cur_date, increase)
+                yield device, "{}:{}".format(date, increase)
 
     def steps(self):
         return [MRStep(mapper_init=self.mapper_init,
