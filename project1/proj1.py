@@ -29,6 +29,11 @@ class proj1(MRJob):
     OVERALL = "0"
     DAILY_PREFIX = "1"
 
+    # Pass the partitioner via streaming's -partitioner flag (mrjob does this
+    # for PARTITIONER). Using the -D mapreduce.job.partitioner.class jobconf
+    # instead fails with "incompatible with map compatibility mode".
+    PARTITIONER = "org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner"
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.partial = {}
@@ -125,12 +130,11 @@ class proj1(MRJob):
 
     def steps(self):
         jobconf = {
-            # Partition by the device part of the key only (field 1, sep '#'),
+            # KeyFieldBasedPartitioner (set via PARTITIONER) reads these:
+            # partition by the device part of the key only (field 1, sep '#'),
             # so a device is never split across reducers.
             "mapreduce.map.output.key.field.separator": self.SEP,
             "mapreduce.partition.keypartitioner.options": "-k1,1",
-            "mapreduce.job.partitioner.class":
-                "org.apache.hadoop.mapred.lib.KeyFieldBasedPartitioner",
         }
         return [MRStep(mapper_init=self.mapper_init,
                        mapper=self.mapper,
