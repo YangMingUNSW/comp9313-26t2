@@ -4,3 +4,4 @@
 - [Solution file convention](solution-file-convention.md) — every deliverable (assignment or project) ships a readable `_solution.md` plus a LaTeX `_solution_pdf.md` for Overleaf.
 - [Sync memory to repo](sync-memory-to-repo.md) — mirror CC memory files into the repo's `claude-memory/` for cross-platform memory continuity.
 - [Auto-push after changes](auto-push-after-changes.md) — commit + push to GitHub after every code/file change so the user can trace/rollback/debug.
+- [No local testing](no-local-testing.md) — never run 9313 code locally; all debugging is on Ed, user runs and reports back.
