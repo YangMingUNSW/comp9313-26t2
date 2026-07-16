@@ -1,7 +1,7 @@
 # Project 2 测试教程 · Testing Guide
 
 在 **Ed** 的 Spark 环境里验证 `project2_rdd.py` 和 `project2_df.py` 是否正确。
-按顺序照抄命令即可。遇到 `<绝对路径>` 记得先替换成你自己的真实路径。
+按顺序照抄命令即可。命令里的路径已按 Ed 上确认的 `/home` 填好,可直接粘贴运行。
 
 ---
 
@@ -24,7 +24,7 @@ pwd
 ls -l
 ```
 
-假设 `pwd` 输出是 `/home/user`,那下面命令里的 `<绝对路径>` 就全部替换成 `/home/user`。
+本教程里 `pwd` 已确认为 `/home`,文件都直接放在 `/home` 下,所以 `file:///` 后接 `/home/...`。若你的 workspace 路径不同,把命令里的 `/home` 换成 `pwd` 的真实输出即可。
 
 > ⚠️ **为什么要 `file:///`**:Spark 默认把路径当 HDFS。加 `file:///` 前缀才是读本地文件。
 > ⚠️ **输出目录必须不存在**:Spark 若发现输出目录已存在会直接报错。重跑前先 `rm -rf` 掉旧目录。
@@ -35,7 +35,7 @@ ls -l
 
 ```bash
 rm -rf out_rdd
-spark-submit project2_rdd.py "file:///<绝对路径>/air_bedroom.csv" "file:///<绝对路径>/out_rdd" 2.8
+spark-submit project2_rdd.py "file:///home/air_bedroom.csv" "file:///home/out_rdd" 2.8
 ```
 
 看结果(`coalesce(1)` 保证只有一个 `part-00000`):
@@ -50,7 +50,7 @@ cat out_rdd/part-00000
 
 ```bash
 rm -rf out_df
-spark-submit project2_df.py "file:///<绝对路径>/air_bedroom.csv" "file:///<绝对路径>/out_df" 2.8
+spark-submit project2_df.py "file:///home/air_bedroom.csv" "file:///home/out_df" 2.8
 ```
 
 ```bash
@@ -86,7 +86,7 @@ diff <(cut -c1-40 out_rdd/part-00000) <(cut -c1-40 output_airbedroom_2.8)
 
 ```bash
 rm -rf out_sample
-spark-submit project2_rdd.py "file:///<绝对路径>/sample.csv" "file:///<绝对路径>/out_sample" 2.0
+spark-submit project2_rdd.py "file:///home/sample.csv" "file:///home/out_sample" 2.0
 cat out_sample/part-00000
 ```
 
