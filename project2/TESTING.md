@@ -54,8 +54,14 @@ spark-submit project2_df.py "file:///home/air_bedroom.csv" "file:///home/out_df"
 ```
 
 ```bash
-cat out_df/part-00000
+ls -la out_df/          # DataFrame 的 write.text 生成的文件名带 uuid,不是 part-00000
+cat out_df/part-*       # 所以用通配符 part-* 来 cat
 ```
+
+> ⚠️ **DF 版文件名和 RDD 版不同**:RDD 的 `saveAsTextFile` 产出 `part-00000`;
+> 而 DataFrame 的 `write.text` 产出 `part-00000-<一长串uuid>-c000.txt`。
+> 所以 DF 版一律用 `part-*` 通配符,别直接 `cat out_df/part-00000`(会报 No such file)。
+> `_SUCCESS`、`.crc` 是 Spark 正常产物,可忽略。
 
 ---
 
@@ -63,7 +69,7 @@ cat out_df/part-00000
 
 ```bash
 diff out_rdd/part-00000 output_airbedroom_2.8
-diff out_df/part-00000  output_airbedroom_2.8
+diff <(cat out_df/part-*) output_airbedroom_2.8   # DF 版文件名带 uuid,用 part-* 通配
 ```
 
 **判读结果:**
