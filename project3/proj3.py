@@ -2,8 +2,6 @@ import sys
 import math
 from pyspark import SparkConf, SparkContext
 from pyspark.sql.session import SparkSession
-from pyspark.sql.functions import *
-from pyspark.sql.types import *
 
 
 class proj3:
