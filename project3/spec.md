@@ -89,13 +89,13 @@ spark-submit proj3.py <input_A_path> <input_B_path> <output_path> <d> <s>
 
 ## Submission
 
-**Deadline:** _(待补充 / TBD — 截图中未包含)_
+**Deadline:** Sunday, 9 August 11:59:59 PM
 
 If you need an extension, please apply for special consideration via **myUNSW** first. You can submit multiple times before the due date and we will only mark your final submission. To prove a successful submission, please take a screenshot as the assignment submission instructions show and keep it to yourself. If you have any problems with submissions, please email [cs9313@cse.unsw.edu.au](mailto:cs9313@cse.unsw.edu.au) or [yi.k.ding@unsw.edu.au](mailto:yi.k.ding@unsw.edu.au).
 
 ## Late Submission Penalty
 
-5% reduction of your marks for up to 5 days. Submissions delayed for over 5 days will be rejected.
+5% of the maximum possible mark per 24 hours for up to 5 days. Submissions delayed for over 5 days will be rejected.
 
 ## Marking Criteria
 
@@ -204,7 +204,7 @@ spark-submit proj3.py <input_A_path> <input_B_path> <output_path> <d> <s>
 
 ## 提交说明
 
-**截止时间：** _(待补充 / TBD —— 截图中未包含)_
+**截止时间：** Sunday, 9 August 11:59:59 PM
 
 如需延期，请先通过 **myUNSW** 申请 special consideration。截止前可多次提交，最终以最后一次提交为准。请按作业说明保留提交成功截图以备查验。提交问题可联系：
 
@@ -213,7 +213,7 @@ spark-submit proj3.py <input_A_path> <input_B_path> <output_path> <d> <s>
 
 ## 迟交扣分
 
-最多 5 天内，每天扣减 5% 分数；迟交超过 5 天不予接受。
+最多 5 天内，每迟交 24 小时扣减总分的 5%；迟交超过 5 天不予接受。
 
 ## 评分标准
 
