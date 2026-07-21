@@ -6,7 +6,8 @@
 ![UNSW](https://img.shields.io/badge/UNSW-COMP9313-FFD200?style=flat-square&labelColor=000000)
 ![Topic](https://img.shields.io/badge/Topic-Big%20Data-4c8bf5?style=flat-square)
 ![Python](https://img.shields.io/badge/Python-MRJob-3776AB?style=flat-square&logo=python&logoColor=white)
-![MapReduce](https://img.shields.io/badge/Paradigm-MapReduce-ff9900?style=flat-square)
+![Spark](https://img.shields.io/badge/Apache%20Spark-RDD%20%26%20DataFrame-E25A1C?style=flat-square&logo=apachespark&logoColor=white)
+![Paradigm](https://img.shields.io/badge/Paradigm-MapReduce%20%2B%20Spark-ff9900?style=flat-square)
 
 </div>
 
@@ -35,6 +36,8 @@ progresses.
 | Folder · 文件夹 | Contents · 内容 |
 | --- | --- |
 | [`project1/`](project1/) | **Latency Stability Analysis** (12 marks) — MRJob / MapReduce job that flags IoT devices whose **daily** average latency deviates from their **overall** average beyond a threshold `T`.<br>**延迟稳定性分析** — 用 MRJob / MapReduce 找出「单日平均延迟」相对「整体平均延迟」超过阈值 `T` 的 IoT 设备。<br>核心 `proj1.py`,题面 `spec.md`,数据 `latency2401*.csv` / `sample.csv`,测试脚本 `run_tests_ed.sh`。 |
+| [`project2/`](project2/) | **Indoor Air Quality Risk Analysis** (16 marks) — Apache Spark job scoring each sensor reading (CO₂ / VOC / PM2.5) and reporting each device's **risky dates**; delivered as **two** solutions, one RDD-only and one DataFrame-only.<br>**室内空气质量风险分析** — 用 Spark 对每条读数计算风险分,输出各设备的高风险日期;分别提供仅 RDD 与仅 DataFrame 两个版本。<br>`project2_rdd.py` / `project2_df.py`,题面 `spec.md`,数据 `air_bedroom.csv` / `sample.csv`,参考输出 `output_airbedroom_2.8`,测试说明 `TESTING.md`。 |
+| [`project3/`](project3/) | **Scalable Spatio-Textual Similarity Joins** (22 marks) — Spark job finding record pairs within Euclidean distance `d` **and** Jaccard similarity `s`, using frequency sorting (broadcast token→rank), **prefix filtering** and a **grid index** to avoid the O(N²) pairwise blow-up.<br>**可扩展的时空相似性连接** — 用 Spark 找出欧氏距离 ≤ `d` 且 Jaccard 相似度 ≥ `s` 的记录对;以频率排序 + 前缀过滤 + 网格索引避免 O(N²) 两两比较。<br>核心 `proj3.py`,题面 `spec.md`,数据 `A.txt` / `B.txt` / `*_large.txt`,参考输出 `output_d=100_s=0.5.txt`。 |
 | [`claude-memory/`](claude-memory/) | Claude Code 跨机记忆镜像(见下方说明)。 |
 
 ## 🧠 `claude-memory/`
