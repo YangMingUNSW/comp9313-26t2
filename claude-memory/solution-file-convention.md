@@ -1,16 +1,26 @@
 ---
 name: solution-file-convention
-description: Two-file output convention for every COMP9313 deliverable (assignment or project)
+description: COMP9313 deliverables are code / auto-marked (Ed) — source + tests, no .tex/_solution.md pair
 metadata:
   node_type: memory
   type: feedback
 ---
 
-For every COMP9313 written deliverable — assignment OR project — produce the solution in TWO files (do not delete the readable one):
+**COMP9313 deliverables are code / auto-marked, not written-up PDFs.** Every deliverable so far
+(project1 MRJob, project2 Spark RDD/DataFrame, project3 Spark join) is a programming task graded
+by an autograder on **Ed**. The deliverable IS the **source + any tests** in the deliverable
+folder — e.g. `proj1.py` + `run_tests_ed.sh`, `project2_rdd.py` / `project2_df.py` + `TESTING.md`,
+`proj3.py` + reference outputs. There is **NO `<name>_solution.md` / `.tex` pair** — the
+Markdown + LaTeX "written solution" convention does **not** apply to this course.
 
-- `<name>_solution.md` — readable Markdown solution.
-- `<name>_solution_pdf.md` — the SAME content but as raw LaTeX source (a full `\documentclass … \end{document}` document), so the user can copy the whole file into Overleaf and compile to PDF for submission. Note: it has a `.md` extension but its contents are LaTeX, not Markdown.
+**Why:** the two-file (`_solution.md` + `.tex`) workflow only exists for human-graded PDF
+deliverables. COMP9313 has none of those; producing solution write-ups here would be dead files
+that no grader reads. (An older version of this note wrongly required a
+`_solution.md` + `_solution_pdf.md` pair for "every deliverable"; that pattern is retired and
+never fit this course.)
 
-**Why:** the user submits PDFs built in Overleaf but keeps the repo Markdown-only; the `_pdf` suffix tells them which file to paste into Overleaf. This is the standing cross-platform writing workflow, reused for every new course.
-
-**How to apply:** target Overleaf's default pdfLaTeX — use ASCII art inside `verbatim` (no Unicode box-drawing or `∞`), math mode for all complexities, and `\resizebox{\textwidth}{!}{…}` for wide tables. See [[comp9313-repo]].
+**How to apply:** focus on the code's correctness and on verifying it — see [[no-local-testing]]
+(all 9313 debugging happens on Ed, the user runs and reports back). Keep each deliverable's
+source, `spec.md`, and test artifacts together in its folder. Only if a future COMP9313
+deliverable is ever a human-graded PDF would the `.tex` + `_solution.md` pair come back. See
+[[comp9313-repo]].
