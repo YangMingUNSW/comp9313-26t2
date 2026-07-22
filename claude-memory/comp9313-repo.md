@@ -6,7 +6,7 @@ metadata:
   type: project
 ---
 
-The PRIVATE GitHub repo `YangMingUNSW/comp9313` (default branch `main`) is the user's cross-platform store for all COMP9313 (Big Data Management, UNSW) work. It reuses the same template/framework as the COMP9312 repo, but carries NO course-specific work yet — it is a clean starting point.
+The PRIVATE GitHub repo `YangMingUNSW/comp9313-26t2` (default branch `main`) is the user's cross-platform store for all COMP9313 (Big Data Management, UNSW) work. It reuses the same template/framework as the COMP9312 repo, but carries NO course-specific work yet — it is a clean starting point.
 
 - Each deliverable (assignment or project) lives in its own top-level folder, named for what it is (`assignment1/`, `project1/`, `project/`, …). Do not assume the course has "assignments" — it may only have projects.
 - `.claude/` and LaTeX build artifacts are gitignored.
